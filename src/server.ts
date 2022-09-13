@@ -3,6 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/Logging';
+import authorRoutes from './routes/Author';
 
 const router = express();
 
@@ -17,6 +18,7 @@ mongoose
         Logging.error('Unable to connect: ');
         Logging.error(error);
     });
+
 
 /** Only start the server if Mongo Connects */
 const startServer = () => {
@@ -35,7 +37,7 @@ const startServer = () => {
     router.use(express.urlencoded({ extended: true }));
     router.use(express.json());
 
-    /** Rules of API */
+    /** Rules of our API */
     router.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -49,9 +51,10 @@ const startServer = () => {
     });
 
     /** Routes */
+    router.use('/authors', authorRoutes);
 
     /** Healthcheck */
-    router.get('/ping', (req, res, next) => res.status(200).json({ message:'pong' }));
+    router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
 
     /** Error Handling */
     router.use((req, res, next) => {
